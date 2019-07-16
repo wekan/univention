@@ -1,8 +1,8 @@
-# Wekan for Uninvention
+# Wekan for Univention
 
-- [Wekan Uninvention-specific Feature Requests and Bug Reports, for example about
-  integrations to other Uninvention App Center apps](https://github.com/wekan/uninvention/issues)
-- [Wekan at Uninvention App Center](https://www.univention.com/products/univention-app-center/app-catalog/wekan/)
+- [Wekan Univention-specific Feature Requests and Bug Reports, for example about
+  integrations to other Univention App Center apps](https://github.com/wekan/univention/issues)
+- [Wekan at Univention App Center](https://www.univention.com/products/univention-app-center/app-catalog/wekan/)
 - [Wekan Commercial Support](https://wekan.team)
 
 ## General info about Wekan
@@ -13,7 +13,7 @@
 
 ## About this repo
 
-This repo contains Uninvention specific Wekan release files.
+This repo contains Univention specific Wekan release files.
 
 # Directory structure of this repo
 ```
