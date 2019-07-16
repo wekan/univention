@@ -5,7 +5,7 @@
 - [Wekan at Uninvention App Center](https://www.univention.com/products/univention-app-center/app-catalog/wekan/)
 - [Wekan Commercial Support](https://wekan.team)
 
-## General info about Wekan:
+## General info about Wekan
 
 - [Wekan website](https://wekan.github.io)
 - [Wekan documentation](https://github.com/wekan/wekan/wiki)
