@@ -15,7 +15,7 @@
 
 This repo contains Univention specific Wekan release files.
 
-# Directory structure of this repo
+## Directory structure of this repo
 ```
 └── wekan-v2.74
     ├── component
