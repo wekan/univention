@@ -1,0 +1,21 @@
+Codename: wekan_20190520122559/all
+Date: Mon, 15 Jul 2019 11:17:21 +0000
+Label: Univention
+Origin: Univention
+Version: wekan_20190520122559
+MD5Sum:
+ d41d8cd98f00b204e9800998ecf8427e                0 Packages
+ 4059d198768f9f8dc9372dc1c54bc3c3               14 Packages.bz2
+ dae3710fb562ed4afd2894cac9cbbab2               20 Packages.gz
+SHA1:
+ da39a3ee5e6b4b0d3255bfef95601890afd80709                0 Packages
+ 64a543afbb5f4bf728636bdcbbe7a2ed0804adc2               14 Packages.bz2
+ 4c3e58d20ba8ca891dd8cd47b76f4fe97bfdfeff               20 Packages.gz
+SHA256:
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855                0 Packages
+ d3dda84eb03b9738d118eb2be78e246106900493c0ae07819ad60815134a8058               14 Packages.bz2
+ 7eb5e2e6acc8f678d6bfec0e3870e1eb13c4b044560fc3fda4ead062626e8129               20 Packages.gz
+SHA512:
+ cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e                0 Packages
+ 6de201dfed1d45412509c65deb34690dc2d09c6aafccfe491fd2f440f92842b9c755b61dc7bcdd4cc0c9f18cf46c2b3a1241e99c4c2a33fff5555e7b2f0b6348               14 Packages.bz2
+ 14dbf5c6feb248e1951097941f8884f41bf65ac00fa6966dc73a701b7957da37ba7703a1ebc8dc4b9c289fd403580c04c8988f6e96636f4347da10f6d0e76f98               20 Packages.gz

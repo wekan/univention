@@ -1,0 +1,5 @@
+[Application]
+ID = wekan
+Detailpageoncatalogue = True
+Teaserpageoncatalogue = True
+AppCategories = Collaboration & Groupware, Project Management

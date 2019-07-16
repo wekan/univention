@@ -1,0 +1,36 @@
+#!/bin/bash
+
+eval "$(/usr/sbin/ucr shell)"
+
+set -e
+set -x
+
+univention-install -y jq
+
+url="http://localhost:${appcenter_apps_wekan_ports_8080}/wekan"
+admin="wekan-admin"
+password="$(cat /etc/wekan-admin.secret)"
+
+# logon
+token="$(curl -s -H "Content-type:application/json" $url/users/login -d '{ "username": "'$admin'", "password": "'$password'" }' | jq -e -r '.token')"
+
+# list users
+curl -s -H "Content-type:application/json" -H "Authorization: Bearer $token" $url/api/users
+curl -s -H "Content-type:application/json" -H "Authorization: Bearer $token" $url/api/users | jq -e -r '. | .[] | .username' | grep wekan-admin
+
+# check wekan mongodb
+docker exec -i wekan-db mongo <<-"EOF"
+use wekan
+res = db.settings.findOne({},{})
+print("checking defaultAuthenticationMethod == ldap (" + res.defaultAuthenticationMethod + ")")
+if (res.defaultAuthenticationMethod != "ldap" ) {
+        quit(1)
+}
+print("checking displayAuthenticationMethod == false (" + res.displayAuthenticationMethod + ")")
+if (res.displayAuthenticationMethod != false) {
+        quit(1)
+}
+EOF
+
+echo "OK"
+exit 0

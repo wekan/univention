@@ -1,0 +1,91 @@
+#!/bin/bash
+#
+# wekan App join script
+#
+# Copyright 2019 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+VERSION="1"
+
+. /usr/share/univention-join/joinscripthelper.lib
+. /usr/share/univention-lib/all.sh
+
+joinscript_init
+
+ucs_addServiceToLocalhost "wekan" "$@"
+
+port="$(ucr get appcenter/apps/wekan/ports/8080)"
+domain="$(ucr get domainname)"
+cat << EOF > /etc/apache2/ucs-sites.conf.d/wekan-app.conf
+    ProxyPassMatch   "^/wekan/(sockjs\/.*\/websocket)\$" "ws://127.0.0.1:$port/wekan/\$1"
+    ProxyPass        "/wekan" "http://127.0.0.1:$port/wekan"
+    ProxyPassReverse "/wekan" "http://127.0.0.1:$port/wekan"
+EOF
+a2enmod proxy proxy_http proxy_wstunnel
+service apache2 reload
+
+# create wekan admin
+pwdfile="/etc/wekan-admin.secret"
+if [ ! -e "$pwdfile" ]; then
+	password="$(makepasswd --minchars=10)"
+	touch "$pwdfile"
+	chmod 600 "$pwdfile"
+	echo -n "$password" > "$pwdfile"
+else
+	password="$(cat $pwdfile)"
+fi
+curl -H "Content-type:application/json" http://localhost:$port/wekan/users/register \
+	-d '{ "username": "wekan-admin", "password": "'$password'", "email": "wekan-admin@'$domain'" }' || true
+
+# default settings
+docker exec -i wekan-db mongo <<-"EOF"
+use wekan
+res = db.settings.findOne({},{})
+db.settings.update(
+  { _id: res._id },
+  { $set:
+    {
+      "disableRegistration": true,
+      "displayAuthenticationMethod": false,
+      "defaultAuthenticationMethod": "ldap"
+    }
+  }
+)
+EOF
+
+# activate wekan for admin
+admin_user=$(custom_username "Administrator")
+admin_dn="$(ucs_convertUID2DN "$admin_user")"
+if [ -n "$admin_dn" ]; then
+        univention-directory-manager users/user modify "$@" --dn "$admin_dn" --set wekanActivated=TRUE
+fi
+
+
+
+joinscript_save_current_version
+
+exit 0

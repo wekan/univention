@@ -1,0 +1,21 @@
+<h3>
+	Authentifizierung
+</h3>
+<p>
+	Die LDAP-Authentifizierung ist in der Wekan App standardmäßig aktiviert. Mitglieder der Domain-Admins Gruppe sind Administratoren in Wekan. Andere Benutzer müssen für Wekan im Benutzermodul im UCS Managementsystem aktiviert werden. <b>Für die Anmeldung muss der Benutzername verwendet werden</b>.
+</p>
+<p>
+	Ein zusätzliches Nicht-LDAP-Konto <b>wekan-admin</b> wird während der Installation der App erstellt. Dieser Account ist auch ein wekan-Administrator und das Passwort finden Sie in der Datei <b>/etc/wekan-admin.secret</b>.
+</p>
+<h3>
+	Data storage
+</h3>
+<p>
+	Alle wekan-Daten werden in einem MongoDB Docker-Container gespeichert und auf dem UCS-Host dem Verzeichnis <b>/var/lib/univention-appcenter/apps/wekan/data/</b> zugeordnet.
+</p>
+<h3>
+	Webzugriff
+</h3>
+<p>
+	Für die wekan-App muss eine ROOT_URL festgelegt werden, standardmäßig https://FQDN/wekan. <b>Die App ist nur über diese URL zugänglich</b>.
+</p>
