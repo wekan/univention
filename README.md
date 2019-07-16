@@ -16,9 +16,7 @@
 This repo contains Uninvention specific Wekan release files.
 
 # Directory structure of this repo
-
 ```
-.
 └── wekan-v2.74
     ├── component
     │   ├── all
