@@ -8,6 +8,7 @@
 ## General info about Wekan
 
 - [Wekan website](https://wekan.github.io)
+- [Wekan ChangeLog](https://github.com/wekan/wekan/blob/master/CHANGELOG.md)
 - [Wekan documentation](https://github.com/wekan/wekan/wiki)
 - [General Wekan Feature Requests and Bug Reports](https://github.com/wekan/wekan/issues)
 
