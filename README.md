@@ -1,7 +1,7 @@
 # Wekan for Univention
 
-- [Wekan Univention-specific Feature Requests and Bug Reports, for example about
-  integrations to other Univention App Center apps](https://github.com/wekan/univention/issues)
+- [Wekan Univention-specific Feature Requests and Bug Reports](https://github.com/wekan/univention/issues),
+  for example about integrations to Univention and other Univention App Center apps
 - [Wekan at Univention App Center](https://www.univention.com/products/univention-app-center/app-catalog/wekan/)
 - [Wekan Commercial Support](https://wekan.team)
 
