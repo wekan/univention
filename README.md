@@ -12,6 +12,10 @@
 - [Wekan documentation](https://github.com/wekan/wekan/wiki)
 - [General Wekan Feature Requests and Bug Reports](https://github.com/wekan/wekan/issues)
 
+## Repair MongoDB
+
+https://github.com/wekan/wekan/wiki/Repair-MongoDB
+
 ## About this repo
 
 This repo contains Univention specific Wekan release files.
