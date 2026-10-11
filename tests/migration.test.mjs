@@ -155,7 +155,7 @@ test('compose retains every historical image comment and old active image', () =
     if (line.trim().startsWith('# Image was:')) assert.ok(current.includes(line), line);
     if (line.trim().startsWith('image:')) assert.ok(current.includes('# Image was: ' + line.trim().slice(7).replaceAll('"', '')));
   }
-  assert.match(current, /image: ghcr.io\/wekan\/ferretdb@sha256:/);
+  assert.match(current, /^    image: ghcr\.io\/wekan\/ferretdb:v1\.92\.0$/m);
   assert.doesNotMatch(current, /ghcr.io\/ferretdb\/|\/build\/ferretdb/);
   const hook = fs.readFileSync(new URL('../component/preinst', import.meta.url), 'utf8');
   assert.ok(hook.includes('"$target/files/db:/state" "$dbimage"'));

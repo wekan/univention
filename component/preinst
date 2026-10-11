@@ -14,7 +14,7 @@ done
 base=/var/lib/univention-appcenter/apps/wekan/data
 target="$base/ferretdb"
 image=ghcr.io/wekan/wekan:v12.28
-dbimage=ghcr.io/wekan/ferretdb@sha256:41786dd4906890ec7ec1d9d1f6477baaec141dea5535553180920715aba6c634
+dbimage=ghcr.io/wekan/ferretdb:v1.92.0
 helper=ghcr.io/wekan/wekan-ucs-migration:v12.28
 mkdir -p "$base/tmp"
 export TMPDIR="$base/tmp"

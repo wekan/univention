@@ -17,7 +17,7 @@ No real UCS upgrade or Docker image build has been validated here yet.
 
 The helper uses the host Docker socket only while migrating, to execute the
 original database container's compatible `mongo` and `mongoexport` read tools.
-The source app is stopped; its MongoDB is not upgraded or modified. A temporary instance of the pinned `ghcr.io/wekan/ferretdb` image receives the
+The source app is stopped; its MongoDB is not upgraded or modified. A temporary instance of the version-tagged `ghcr.io/wekan/ferretdb:v1.92.0` image receives the
 converted data, using the same image as the final database service. Its UID 1000
 owns the database directory; the app's UID owns attachment/avatar files. Both temporary containers are removed before
 App Center replaces the installed services with WeKan and FerretDB SQLite.
