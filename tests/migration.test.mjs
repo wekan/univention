@@ -28,6 +28,24 @@ test('missing original attachment metadata blocks cutover', async () => {
   await assert.rejects(verifyFiles(db), /Missing original/);
 });
 
+test('attachments and avatars are verified beneath the configured writable path', async () => {
+  const writable = fs.mkdtempSync(path.join(os.tmpdir(), 'ucs-writable-'));
+  try {
+    for (const bucket of ['attachments', 'avatars']) {
+      fs.mkdirSync(path.join(writable, 'files', bucket), { recursive: true });
+      fs.writeFileSync(path.join(writable, 'files', bucket, 'original'), 'content');
+    }
+    const db = { collection: bucket => ({ find: async function* () {
+      yield { versions: { original: { storage: 'fs', size: 7,
+        path: path.join(writable, 'files', bucket, 'original') } } };
+    } }) };
+    await verifyFiles(db, writable);
+    await assert.rejects(verifyFiles(db, path.join(writable, 'wrong')), /outside persistent volume/);
+    fs.unlinkSync(path.join(writable, 'files', 'avatars', 'original'));
+    await assert.rejects(verifyFiles(db, writable), /ENOENT/);
+  } finally { fs.rmSync(writable, { recursive: true, force: true }); }
+});
+
 function hook(mode, oldVersion = '6.09', existingTarget = false) {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'ucs-hook-'));
   try {

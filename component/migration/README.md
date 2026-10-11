@@ -49,3 +49,8 @@ Both WeKan release workflows now call `.github/workflows/ucs.yml` to create/resu
 a portal draft and build a missing helper image once credentials and the source/
 target UCS variables are configured. Production approval remains with the provider
 and Univention. All previous compose image comments are preserved.
+
+The helper derives attachment and avatar directories from `WRITABLE_PATH`
+(default `/data`): `files/attachments` and `files/avatars`. Its status and
+completion marker also live under that root. UCS mounts the sibling `files/db`
+directory as `/state` in both the temporary and installed FerretDB containers.

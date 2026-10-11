@@ -23,11 +23,11 @@ export function verifyFile(version, root, stat = fs.statSync) {
   if (!info.isFile() || !Number.isFinite(version.size) || info.size !== version.size) throw new Error('Missing or truncated file');
 }
 
-export async function verifyFiles(db) {
+export async function verifyFiles(db, writablePath = process.env.WRITABLE_PATH || '/data') {
   for (const bucket of ['attachments', 'avatars']) {
     for await (const record of db.collection(bucket).find({})) {
       if (!record.versions?.original) throw new Error(`Missing original version: ${bucket}/${record._id}`);
-      for (const version of Object.values(record.versions)) verifyFile(version, `/data/files/${bucket}`);
+      for (const version of Object.values(record.versions)) verifyFile(version, path.resolve(writablePath, 'files', bucket));
     }
   }
 }
