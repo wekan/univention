@@ -116,7 +116,7 @@ test('installed compose contains only WeKan and FerretDB and preserves UCS LDAP'
   const source = fs.readFileSync(new URL('../component/compose', import.meta.url), 'utf8');
   assert.deepEqual([...source.matchAll(/^  ([a-z]+):$/gm)].map(m => m[1]), ['wekandb', 'wekan']);
   assert.match(source, /--handler=sqlite/);
-  assert.match(source, /--sqlite-url=file:\/data\/files\/db\//);
+  assert.match(source, /--sqlite-url=file:\/state\//);
   assert.match(source, /LDAP_HOST=@%@ldap\/server\/name@%@/);
   assert.match(source, /WRITABLE_PATH=\/data/);
   assert.match(source, /test -f \/data\/\.ucs-migration-complete/);
@@ -146,4 +146,18 @@ test('vendored importer resolves real CollectionFS references and rejects missin
   assert.match(source, /if \(!id \|\| !fileIds.has\(String\(id\)\)\) err/,
     'a missing binary must block completion, not silently lose a card attachment');
   assert.match(source, /updated.matchedCount !== 1/);
+});
+
+test('compose retains every historical image comment and old active image', () => {
+  const old = fs.readFileSync(new URL('../component/compose-6.09', import.meta.url), 'utf8');
+  const current = fs.readFileSync(new URL('../component/compose', import.meta.url), 'utf8');
+  for (const line of old.split('\n')) {
+    if (line.trim().startsWith('# Image was:')) assert.ok(current.includes(line), line);
+    if (line.trim().startsWith('image:')) assert.ok(current.includes('# Image was: ' + line.trim().slice(7).replaceAll('"', '')));
+  }
+  assert.match(current, /image: ghcr.io\/wekan\/ferretdb@sha256:/);
+  assert.doesNotMatch(current, /ghcr.io\/ferretdb\/|\/build\/ferretdb/);
+  const hook = fs.readFileSync(new URL('../component/preinst', import.meta.url), 'utf8');
+  assert.ok(hook.includes('"$target/files/db:/state" "$dbimage"'));
+  assert.ok(hook.includes('chown -R 1000:1000 /data/files/db'));
 });

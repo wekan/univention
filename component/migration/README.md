@@ -17,8 +17,9 @@ No real UCS upgrade or Docker image build has been validated here yet.
 
 The helper uses the host Docker socket only while migrating, to execute the
 original database container's compatible `mongo` and `mongoexport` read tools.
-The source app is stopped; its MongoDB is not upgraded or modified. A temporary
-FerretDB receives the converted data. Both temporary containers are removed before
+The source app is stopped; its MongoDB is not upgraded or modified. A temporary instance of the pinned `ghcr.io/wekan/ferretdb` image receives the
+converted data, using the same image as the final database service. Its UID 1000
+owns the database directory; the app's UID owns attachment/avatar files. Both temporary containers are removed before
 App Center replaces the installed services with WeKan and FerretDB SQLite.
 
 `importer.mjs` is vendored from `wekan/wekan` at commit
@@ -37,3 +38,14 @@ node --test tests/migration.test.mjs
 
 These tests use a mocked Docker CLI. They do not replace a real 6.09 portal
 upgrade, LDAP/browser/download checks, reboot testing and rollback rehearsal.
+
+The original UCS `wekan-wekandb:6.09-ucs1` image was verified from its registry
+manifest as MongoDB 3.2.21. The new database image is the SQLite-capable
+`wekan/FerretDB` v1 fork, not upstream FerretDB v2. Univention mirrors the compose
+source images into its own registry when publishing. The migration hook also
+needs access to the pinned GHCR database, application and helper images.
+
+Both WeKan release workflows now call `.github/workflows/ucs.yml` to create/resume
+a portal draft and build a missing helper image once credentials and the source/
+target UCS variables are configured. Production approval remains with the provider
+and Univention. All previous compose image comments are preserved.

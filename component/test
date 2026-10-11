@@ -38,7 +38,7 @@ EOF
 # Exactly the two app services; no importer or old MongoDB process after startup.
 test "$(docker inspect -f '{{.State.Running}}' wekan-app)" = true
 test "$(docker inspect -f '{{.State.Running}}' wekan-db)" = true
-docker inspect -f '{{json .Config.Cmd}}' wekan-db | grep -q '/build/ferretdb'
+docker inspect -f '{{json .Config.Entrypoint}}' wekan-db | grep -q '/ferretdb'
 ! docker inspect wekan-ucs-migration >/dev/null 2>&1
 ! docker inspect wekan-ucs-migration-db >/dev/null 2>&1
 
