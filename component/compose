@@ -185,7 +185,7 @@ services:
     # Image was: quay.io/wekan/wekan-gantt-gpl:v6.09
     # Image was: docker.software-univention.de/wekan-wekan:6.09
     # Image was: docker.software-univention.de/wekan-wekan:6.09-ucs1
-    image: ghcr.io/wekan/wekan:v12.32
+    image: ghcr.io/wekan/wekan:v12.28
     container_name: wekan-app
     restart: always
     # Fail closed until the offline migration and file verification have passed.
