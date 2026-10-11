@@ -11,7 +11,7 @@
 	Data storage
 </h3>
 <p>
-	All the wekan data is stored in a MongoDB Docker container and mapped on the UCS host to the directory <b>/var/lib/univention-appcenter/apps/wekan/data/</b>.
+	The prepared WeKan 12.28 upgrade migrates MongoDB data to FerretDB SQLite and attachments/avatars to files automatically during the UCS portal upgrade. After migration only WeKan and FerretDB containers run. Active data is in <b>/var/lib/univention-appcenter/apps/wekan/data/ferretdb/files/</b>: <b>db/</b>, <b>attachments/</b> and <b>avatars/</b>. Back up all three together. Original MongoDB data and upgrade backups are retained under <b>data/db/</b> and <b>data/dump/</b>.
 </p>
 <h3>
 	Access

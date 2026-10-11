@@ -3,7 +3,7 @@
 eval "$(/usr/sbin/ucr shell)"
 
 set -e
-set -x
+
 
 univention-install -y jq
 
@@ -19,18 +19,28 @@ curl -s -H "Content-type:application/json" -H "Authorization: Bearer $token" $ur
 curl -s -H "Content-type:application/json" -H "Authorization: Bearer $token" $url/api/users | jq -e -r '. | .[] | .username' | grep wekan-admin
 
 # check wekan mongodb
-docker exec -i wekan-db mongo <<-"EOF"
-use wekan
-res = db.settings.findOne({},{})
-print("checking defaultAuthenticationMethod == ldap (" + res.defaultAuthenticationMethod + ")")
-if (res.defaultAuthenticationMethod != "ldap" ) {
-        quit(1)
-}
-print("checking displayAuthenticationMethod == false (" + res.displayAuthenticationMethod + ")")
-if (res.displayAuthenticationMethod != false) {
-        quit(1)
-}
+docker exec -i wekan-app node <<'EOF'
+const { createRequire } = require('node:module');
+const bundleRequire = createRequire('/build/programs/server/npm/node_modules/meteor/npm-mongo/node_modules/_.cjs');
+const { MongoClient } = bundleRequire('mongodb');
+(async () => {
+  const client = await MongoClient.connect(process.env.MONGO_URL);
+  try {
+    const settings = client.db().collection('settings');
+    const res = await settings.findOne({});
+    if (!res) throw new Error('WeKan settings not initialized');
+    if (res.defaultAuthenticationMethod !== 'ldap' || res.displayAuthenticationMethod !== false) {
+      throw new Error('UCS authentication settings were not preserved');
+    }
+  } finally { await client.close(); }
+})().catch(error => { console.error(error); process.exitCode = 1; });
 EOF
+# Exactly the two app services; no importer or old MongoDB process after startup.
+test "$(docker inspect -f '{{.State.Running}}' wekan-app)" = true
+test "$(docker inspect -f '{{.State.Running}}' wekan-db)" = true
+docker inspect -f '{{json .Config.Cmd}}' wekan-db | grep -q '/build/ferretdb'
+! docker inspect wekan-ucs-migration >/dev/null 2>&1
+! docker inspect wekan-ucs-migration-db >/dev/null 2>&1
 
 echo "OK"
 exit 0

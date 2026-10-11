@@ -29,7 +29,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION="1"
+VERSION="2"
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/all.sh
@@ -48,6 +48,20 @@ EOF
 a2enmod proxy proxy_http proxy_wstunnel
 service apache2 reload
 
+# Initial schema migrations can take longer than container startup.
+ready=false
+for attempt in $(seq 1 180); do
+    if curl --fail --silent --max-time 5 --output /dev/null "http://localhost:$port/wekan"; then
+        ready=true
+        break
+    fi
+    sleep 2
+done
+if [ "$ready" != true ]; then
+    echo 'WeKan did not become ready; inspect the app container logs' >&2
+    exit 1
+fi
+
 # create wekan admin
 pwdfile="/etc/wekan-admin.secret"
 if [ ! -e "$pwdfile" ]; then
@@ -62,20 +76,25 @@ curl -H "Content-type:application/json" http://localhost:$port/wekan/users/regis
 	-d '{ "username": "wekan-admin", "password": "'$password'", "email": "wekan-admin@'$domain'" }' || true
 
 # default settings
-docker exec -i wekan-db mongo <<-"EOF"
-use wekan
-res = db.settings.findOne({},{})
-db.settings.update(
-  { _id: res._id },
-  { $set:
-    {
-      "disableRegistration": true,
-      "displayAuthenticationMethod": false,
-      "defaultAuthenticationMethod": "ldap"
-    }
-  }
-)
+docker exec -i wekan-app node <<'EOF'
+const { createRequire } = require('node:module');
+const bundleRequire = createRequire('/build/programs/server/npm/node_modules/meteor/npm-mongo/node_modules/_.cjs');
+const { MongoClient } = bundleRequire('mongodb');
+(async () => {
+  const client = await MongoClient.connect(process.env.MONGO_URL);
+  try {
+    const settings = client.db().collection('settings');
+    const res = await settings.findOne({});
+    if (!res) throw new Error('WeKan settings not initialized');
+    await settings.updateOne({ _id: res._id }, { $set: {
+      disableRegistration: true,
+      displayAuthenticationMethod: false,
+      defaultAuthenticationMethod: 'ldap',
+    } });
+  } finally { await client.close(); }
+})().catch(error => { console.error(error); process.exitCode = 1; });
 EOF
+if [ "$?" -ne 0 ]; then exit 1; fi
 
 # activate wekan for admin
 admin_user=$(custom_username "Administrator")

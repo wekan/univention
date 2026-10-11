@@ -12,7 +12,18 @@
 - [Wekan documentation](https://github.com/wekan/wekan/wiki)
 - [General Wekan Feature Requests and Bug Reports](https://github.com/wekan/wekan/issues)
 
-## Repair MongoDB
+## Prepared 12.28 portal upgrade
+
+The new `component/compose` uses two services: WeKan and FerretDB SQLite.
+`component/preinst` automatically backs up and migrates a 6.09 installation during
+the UCS App Center upgrade, moving attachments and avatars to filesystem storage.
+The helper image must be built/published and the hooks registered before release.
+A real UCS upgrade still needs acceptance testing.
+
+See [migration helper](component/migration/README.md) and the
+[remaining maintainer steps](https://github.com/wekan/wekan/blob/main/docs/Design/Autoupdate/UCS.md).
+
+## Repair legacy MongoDB
 
 https://github.com/wekan/wekan/wiki/Repair-MongoDB
 
